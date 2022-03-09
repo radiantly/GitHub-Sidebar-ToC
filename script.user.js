@@ -4,9 +4,9 @@
 // @match       https://github.com/*/*
 // @match       https://github.com/*/*/tree/*
 // @grant       GM_addStyle
-// @version     1.0
+// @version     1.1
 // @author      radiantly
-// @description Puts an interactive Table of Contents on side of a GitHub Readme!
+// @description Puts an interactive Table of Contents on the side of a GitHub Readme!
 // ==/UserScript==
 
 GM_addStyle(`
@@ -62,7 +62,7 @@ sidebarGrid.insertAdjacentHTML(
 `
 );
 
-const anchor = [];
+const anchorElems = [];
 
 const tocWrap = document.querySelector(".lb-toc-items");
 const tocItems = document.querySelectorAll(
@@ -74,8 +74,8 @@ let justClicked = false;
 const setActive = (idx) => {
   if (currentActive === idx) return;
   if (currentActive !== null)
-    anchor[currentActive].listElem.classList.remove("active");
-  anchor[idx].listElem.classList.add("active");
+    anchorElems[currentActive].listElem.classList.remove("active");
+  anchorElems[idx].listElem.classList.add("active");
   currentActive = idx;
 };
 
@@ -91,8 +91,8 @@ tocItems.forEach((elem, index) => {
     setActive(index);
     justClicked = true;
   });
-  anchor.push({
-    anchor: document.querySelector(
+  anchorElems.push({
+    headingElem: document.querySelector(
       `.anchor[href="${elem.href.replace(/^[^#]*/, "")}"]`
     ),
     listElem: tocItem,
@@ -109,27 +109,18 @@ document.addEventListener(
 
     const offsetTop = 55; // offset top due to sticky header
 
-    let curTop = anchor[currentActive].anchor.getBoundingClientRect().top;
-
-    // Check if the active section has changed to the immediate previous section
-    if (curTop >= offsetTop) {
-      if (currentActive == 0) return;
-      const prevTop =
-        anchor[currentActive - 1].anchor.getBoundingClientRect().top;
-      if (prevTop < offsetTop) {
-        return setActive(currentActive - 1);
-      }
+    // Highlight the correct active toc item on scroll
+    // Binary Search FTW!
+    let low = 0;
+    let high = anchorElems.length - 1;
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      if (anchorElems[mid].headingElem.getBoundingClientRect().top > offsetTop)
+        high = mid - 1;
+      else low = mid + 1;
     }
 
-    // Check all sections after to find the active section
-    for (let i = currentActive; i < anchor.length; i++) {
-      const nextTop =
-        i + 1 < anchor.length
-          ? anchor[i + 1].anchor.getBoundingClientRect().top
-          : Infinity;
-      if (curTop < offsetTop && nextTop >= offsetTop) return setActive(i);
-      curTop = nextTop;
-    }
+    return setActive(high + 1);
   },
   {
     passive: true,
