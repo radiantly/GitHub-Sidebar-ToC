@@ -14,7 +14,7 @@ _"... finally using that wasted sidebar space" – radiantly_
 ## Installation
 
 1. You will need a userscript manager like [Violentmonkey](https://violentmonkey.github.io/). Install it for Firefox [here](https://addons.mozilla.org/firefox/addon/violentmonkey/) or Chrome [here](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag).
-2. Click here to install the userscript.
+2. Click [here](https://cdn.jsdelivr.net/gh/radiantly/GitHub-Sidebar-ToC@main/script.user.js) to install the userscript.
 
 ## Usage
 
