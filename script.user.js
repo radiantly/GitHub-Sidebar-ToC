@@ -4,7 +4,7 @@
 // @match       https://github.com/*/*
 // @match       https://github.com/*/*/tree/*
 // @grant       GM_addStyle
-// @version     1.2
+// @version     1.3
 // @author      radiantly
 // @description Puts an interactive Table of Contents on the side of a GitHub Readme!
 // ==/UserScript==
@@ -86,7 +86,7 @@ const populateToC = () => {
   tocItems.forEach((elem, index) => {
     tocWrap.insertAdjacentHTML(
       "beforeend",
-      `<a href="${elem.href}" style="padding-left: ${elem.style.paddingLeft}">${elem.innerText}</a>`
+      `<a href="${elem.href}" style="padding-left: ${elem.style.paddingLeft}">${elem.textContent}</a>`
     );
     const tocItem = document.querySelector(
       `.lb-toc-items a[href="${elem.href}"]`
